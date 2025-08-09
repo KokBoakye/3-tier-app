@@ -1,4 +1,4 @@
-name: Provision AWS & Deploy App
+name: Provision AWS && Deploy App
 
 on:
   push:
