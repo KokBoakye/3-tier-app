@@ -41,23 +41,36 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      # 5️⃣ Terraform Apply
       - name: Terraform Apply
-        run: terraform apply -auto-approve
-        working-directory: ./terraform
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      # 6️⃣ Get Terraform outputs (EC2 IPs)
-      - name: Get Terraform Outputs
-        id: tfoutputs
         run: |
+          terraform apply -auto-approve
           BACKEND_IP=$(terraform output -raw backend_public_ip)
           FRONTEND_IP=$(terraform output -raw frontend_public_ip)
           echo "BACKEND_IP=$BACKEND_IP" >> $GITHUB_ENV
           echo "FRONTEND_IP=$FRONTEND_IP" >> $GITHUB_ENV
         working-directory: ./terraform
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+
+      # # 5️⃣ Terraform Apply
+      # - name: Terraform Apply
+      #   run: terraform apply -auto-approve
+      #   working-directory: ./terraform
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      # # 6️⃣ Get Terraform outputs (EC2 IPs)
+      # - name: Get Terraform Outputs
+      #   id: tfoutputs
+      #   run: |
+      #     BACKEND_IP=$(terraform output -raw backend_public_ip)
+      #     FRONTEND_IP=$(terraform output -raw frontend_public_ip)
+      #     echo "BACKEND_IP=$BACKEND_IP" >> $GITHUB_ENV
+      #     echo "FRONTEND_IP=$FRONTEND_IP" >> $GITHUB_ENV
+      #   working-directory: ./terraform
 
       # 7️⃣ Build Backend
       - name: Build Backend
