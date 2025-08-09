@@ -15,7 +15,12 @@ output "db_instance_id" {
   value = aws_db_instance.mydb.id
 }
 
-output "instance_public_ip_app" {
+output "backend_public_ip" {
   description = "Public IP of the EC2 instance in the app tier"
   value       = aws_instance.app_server.public_ip
+}
+
+output "frontend_public_ip" {
+  description = "Public IP of the EC2 instance in the app tier"
+  value       = aws_instance.web_server.public_ip
 }
