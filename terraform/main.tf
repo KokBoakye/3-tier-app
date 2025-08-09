@@ -231,7 +231,7 @@ resource "aws_instance" "app_server" {
   ami                    = data.aws_ami.amazon_linux_2.id
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.private.id
-  vpc_security_group_ids = [aws_security_group.app_sg.id]
+  vpc_security_group_ids = [aws_security_group.web_sg.id]
 
   key_name = var.key_pair_name
 
