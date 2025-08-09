@@ -41,17 +41,17 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Terraform Apply
-        run: |
-          terraform apply -auto-approve
-          BACKEND_IP=$(terraform output -raw backend_public_ip)
-          FRONTEND_IP=$(terraform output -raw frontend_public_ip)
-          echo "BACKEND_IP=$BACKEND_IP" >> $GITHUB_ENV
-          echo "FRONTEND_IP=$FRONTEND_IP" >> $GITHUB_ENV
-        working-directory: ./terraform
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      # - name: Terraform Apply
+      #   run: |
+      #     terraform apply -auto-approve
+      #     BACKEND_IP=$(terraform output -raw backend_public_ip)
+      #     FRONTEND_IP=$(terraform output -raw frontend_public_ip)
+      #     echo "BACKEND_IP=$BACKEND_IP" >> $GITHUB_ENV
+      #     echo "FRONTEND_IP=$FRONTEND_IP" >> $GITHUB_ENV
+      #   working-directory: ./terraform
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 
       # # 5️⃣ Terraform Apply
@@ -72,34 +72,34 @@ jobs:
       #     echo "FRONTEND_IP=$FRONTEND_IP" >> $GITHUB_ENV
       #   working-directory: ./terraform
 
-      # 7️⃣ Build Backend
-      - name: Build Backend
-        working-directory: ./src/backend
-        run: |
-          npm install
-          npm run build || echo "No backend build step"
+      # # 7️⃣ Build Backend
+      # - name: Build Backend
+      #   working-directory: ./src/backend
+      #   run: |
+      #     npm install
+      #     npm run build || echo "No backend build step"
 
-      # 8️⃣ Build Frontend
-      - name: Build Frontend
-        working-directory: ./src/frontend
-        run: |
-          npm install
-          npm run build || echo "No frontend build step"
+      # # 8️⃣ Build Frontend
+      # - name: Build Frontend
+      #   working-directory: ./src/frontend
+      #   run: |
+      #     npm install
+      #     npm run build || echo "No frontend build step"
 
-      # 9️⃣ Setup SSH key for deployment
-      - name: Setup SSH key
-        run: |
-          echo "$SSH_KEY" > private_key.pem
-          chmod 600 private_key.pem
+      # # 9️⃣ Setup SSH key for deployment
+      # - name: Setup SSH key
+      #   run: |
+      #     echo "$SSH_KEY" > private_key.pem
+      #     chmod 600 private_key.pem
 
-      # 🔟 Deploy Backend to EC2
-      - name: Deploy Backend
-        run: |
-          scp -o StrictHostKeyChecking=no -i private_key.pem -r ./src/backend/* $SSH_USER@$BACKEND_IP:/home/$SSH_USER/backend
-          ssh -o StrictHostKeyChecking=no -i private_key.pem $SSH_USER@$BACKEND_IP "cd backend && npm install --production && pm2 restart all || pm2 start app.js"
+      # # 🔟 Deploy Backend to EC2
+      # - name: Deploy Backend
+      #   run: |
+      #     scp -o StrictHostKeyChecking=no -i private_key.pem -r ./src/backend/* $SSH_USER@$BACKEND_IP:/home/$SSH_USER/backend
+      #     ssh -o StrictHostKeyChecking=no -i private_key.pem $SSH_USER@$BACKEND_IP "cd backend && npm install --production && pm2 restart all || pm2 start app.js"
 
-      # 1️⃣1️⃣ Deploy Frontend to EC2
-      - name: Deploy Frontend
-        run: |
-          scp -o StrictHostKeyChecking=no -i private_key.pem -r ./src/frontend/build/* $SSH_USER@$FRONTEND_IP:/var/www/html/
-          ssh -o StrictHostKeyChecking=no -i private_key.pem $SSH_USER@$FRONTEND_IP "sudo systemctl restart nginx"
+      # # 1️⃣1️⃣ Deploy Frontend to EC2
+      # - name: Deploy Frontend
+      #   run: |
+      #     scp -o StrictHostKeyChecking=no -i private_key.pem -r ./src/frontend/build/* $SSH_USER@$FRONTEND_IP:/var/www/html/
+      #     ssh -o StrictHostKeyChecking=no -i private_key.pem $SSH_USER@$FRONTEND_IP "sudo systemctl restart nginx"
