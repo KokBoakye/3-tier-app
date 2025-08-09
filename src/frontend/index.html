@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>3-Tier App</title>
+</head>
+<body>
+  <h1>Welcome to the 3-Tier App</h1>
+  <p>API Response:</p>
+  <pre id="api"></pre>
+  <script>
+    fetch("/api")
+      .then(res => res.text())
+      .then(data => document.getElementById("api").innerText = data)
+      .catch(err => console.error(err));
+  </script>
+</body>
+</html>

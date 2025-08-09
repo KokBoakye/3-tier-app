@@ -1,4 +1,4 @@
-name: Deploy aws resources via Terraform
+name: Provision AWS & Deploy App
 
 on:
   push:
@@ -11,36 +11,31 @@ jobs:
 
     env:
       AWS_REGION: ${{ secrets.AWS_REGION }}
+      SSH_USER: ubuntu                           # Change to ec2-user if Amazon Linux
+      SSH_KEY: ${{ secrets.EC2_SSH_KEY }}        # PEM file content as GitHub Secret
 
     steps:
+      # 1️⃣ Checkout repo
       - name: Checkout repo
         uses: actions/checkout@v3
 
+      # 2️⃣ Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.0
 
+      # 3️⃣ Terraform Init
       - name: Terraform Init
         run: terraform init
         working-directory: ./terraform
 
-      - name: Terraform Destroy (clean up previous resources)
+      # 4️⃣ Terraform Destroy (optional cleanup before redeploy)
+      - name: Terraform Destroy (cleanup)
         run: terraform destroy -auto-approve
         working-directory: ./terraform
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
-        working-directory: ./terraform
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-   
-
-    
 
      
