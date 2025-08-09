@@ -37,7 +37,7 @@ variable "availability_zone" {
 variable "ssh_allowed_ip" {
   description = "Your IP address for SSH access (CIDR format)"
   type        = string
-  default     = "0.0.0.0./0"  # Replace with your actual IP before apply
+  default     = "0.0.0.0/0"  # Replace with your actual IP before apply
 }
 
 variable "key_pair_name" {
